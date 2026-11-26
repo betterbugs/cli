@@ -1,0 +1,43 @@
+{
+  "name": "@betterbugs/cli",
+  "version": "0.1.0",
+  "description": "BetterBugs CLI: read, file and act on BetterBugs bug reports from the terminal, CI and coding agents.",
+  "license": "MIT",
+  "author": "BetterBugs",
+  "homepage": "https://betterbugs.io",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/betterbugs/cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/betterbugs/cli/issues"
+  },
+  "keywords": [
+    "betterbugs",
+    "cli",
+    "bug-reporting",
+    "bug-tracking",
+    "debugging",
+    "ci",
+    "agents"
+  ],
+  "type": "module",
+  "bin": {
+    "betterbugs": "dist/index.js",
+    "bbug": "dist/index.js",
+    "bb": "dist/index.js"
+  },
+  "files": [
+    "dist",
+    "skills",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=20.18.1"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}

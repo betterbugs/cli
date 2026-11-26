@@ -1,0 +1,63 @@
+# Lives in the PUBLIC repository (betterbugs/cli). The private source repo
+# (bb-cli) pushes the built package here; publishing a GitHub release for the
+# version tag publishes it to npm and renders the Homebrew formula.
+# Secrets (public repo): NPM_TOKEN.
+name: Publish
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write # attach betterbugs.rb to the release
+  id-token: write # npm provenance
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+
+      - name: The release tag matches package.json
+        run: |
+          version="$(node -p "require('./package.json').version")"
+          if [ "v$version" != "$GITHUB_REF_NAME" ]; then
+            echo "Release tag $GITHUB_REF_NAME does not match package.json version $version" >&2
+            exit 1
+          fi
+        env:
+          GITHUB_REF_NAME: ${{ github.event.release.tag_name }}
+
+      - name: Smoke test the bundle
+        run: |
+          node dist/index.js --version
+          node dist/index.js agent-context --json > /dev/null
+
+      # Prereleases (1.2.0-beta.1) go to the `next` dist-tag.
+      - name: Publish to npm
+        run: |
+          if node -p "require('./package.json').version" | grep -q -- '-'; then
+            npm publish --provenance --access public --tag next
+          else
+            npm publish --provenance --access public
+          fi
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Render the Homebrew formula
+        run: |
+          version="$(node -p "require('./package.json').version")"
+          node packaging/homebrew/render-formula.mjs "$version" betterbugs.rb
+
+      - name: Attach the formula to the release
+        run: gh release upload "$TAG" betterbugs.rb --clobber
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.event.release.tag_name }}
