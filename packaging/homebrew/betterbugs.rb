@@ -1,9 +1,9 @@
-# Homebrew formula template for the betterbugs/tap tap.
+# Homebrew formula template for the betterbugs/tap tap (GitHub repo betterbugs/homebrew-tap).
 #
 # Do not edit the placeholders by hand. For every release, the public repo's
 # publish workflow (packaging/public-repo/.github/workflows/publish.yml) runs
 # packaging/homebrew/render-formula.mjs, which downloads the published npm
-# tarball, computes its sha256, fills in __VERSION__ and __SHA256__, and
+# tarball, computes its sha256, fills in the version and sha256 placeholders, and
 # attaches the finished betterbugs.rb to the GitHub release. Copy that file to
 # Formula/betterbugs.rb in the tap repository:
 #   brew install betterbugs/tap/betterbugs

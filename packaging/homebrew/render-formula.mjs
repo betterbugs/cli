@@ -14,12 +14,14 @@ if (!version || !out || !/^\d+\.\d+\.\d+(-[0-9A-Za-z.-]+)?$/.test(version)) {
 
 const url = `https://registry.npmjs.org/@betterbugs/cli/-/cli-${version}.tgz`;
 let res;
-// The registry can take a moment to serve a just-published tarball.
-for (let attempt = 1; attempt <= 10; attempt++) {
+// npm can take several minutes to serve a just-published tarball
+// ("Your package is being processed"): wait up to ~15 minutes.
+const attempts = 45;
+for (let attempt = 1; attempt <= attempts; attempt++) {
   res = await fetch(url);
   if (res.ok) break;
-  console.error(`GET ${url} -> ${res.status} (attempt ${attempt}/10)`);
-  await new Promise((r) => setTimeout(r, 15_000));
+  console.error(`GET ${url} -> ${res.status} (attempt ${attempt}/${attempts})`);
+  if (attempt < attempts) await new Promise((r) => setTimeout(r, 20_000));
 }
 if (!res?.ok) {
   console.error(`Could not download ${url}`);
