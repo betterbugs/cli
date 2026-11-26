@@ -1,7 +1,8 @@
 # Lives in the PUBLIC repository (betterbugs/cli). The private source repo
 # (bb-cli) pushes the built package here; publishing a GitHub release for the
 # version tag publishes it to npm and renders the Homebrew formula.
-# Secrets (public repo): NPM_TOKEN.
+# npm auth: trusted publishing (OIDC), no npm token. On npmjs.com, @betterbugs/cli
+# → Settings → Trusted Publisher: GitHub Actions, betterbugs/cli, publish.yml.
 name: Publish
 
 on:
@@ -10,7 +11,7 @@ on:
 
 permissions:
   contents: write # attach betterbugs.rb to the release
-  id-token: write # npm provenance
+  id-token: write # npm trusted publishing + provenance
 
 jobs:
   publish:
@@ -40,6 +41,10 @@ jobs:
           node dist/index.js --version
           node dist/index.js agent-context --json > /dev/null
 
+      # Trusted publishing needs npm 11.5.1+; Node 22 ships npm 10.
+      - name: Update npm
+        run: npm install -g npm@11
+
       # Prereleases (1.2.0-beta.1) go to the `next` dist-tag.
       - name: Publish to npm
         run: |
@@ -48,8 +53,6 @@ jobs:
           else
             npm publish --provenance --access public
           fi
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Render the Homebrew formula
         run: |

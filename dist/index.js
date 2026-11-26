@@ -3462,7 +3462,7 @@ function toCliError(err) {
 }
 
 // src/version.ts
-var VERSION = true ? "0.1.0" : "0.0.0-dev";
+var VERSION = true ? "0.1.2" : "0.0.0-dev";
 var OUTPUT_API_VERSION = "v1";
 
 // src/output/render.ts

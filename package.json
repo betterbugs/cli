@@ -1,6 +1,6 @@
 {
   "name": "@betterbugs/cli",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "BetterBugs CLI: read, file and act on BetterBugs bug reports from the terminal, CI and coding agents.",
   "license": "MIT",
   "author": "BetterBugs",
